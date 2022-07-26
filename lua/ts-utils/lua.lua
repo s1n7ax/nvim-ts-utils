@@ -3,22 +3,28 @@ local Helper = require('ts-utils.helper')
 local queries = {
   container_function = [[
 	[
+	  (function_definition
+		parameters: (parameters) @parameters
+        body: (block) @body)
 
-	  (function_declaration
-		name: (identifier) @name
+	  (function_definition
 		parameters: (parameters) @parameters)
-	
-  	  (function_declaration
-  	    name: (identifier) @name
-  	    parameters: (parameters) @parameters
-  	    body: (block) @body)
-  
+
   	  (function_declaration
   	    name: (method_index_expression
   	  	  table: (identifier) @instance
   	  	  method: (identifier) @name)
   	    parameters: (parameters) @parameters
   	    body: (block) @body)
+
+  	  (function_declaration
+  	    name: (identifier) @name
+  	    parameters: (parameters) @parameters
+  	    body: (block) @body)
+  
+	  (function_declaration
+		name: (identifier) @name
+		parameters: (parameters) @parameters)
 
 	  (variable_declaration
 		(assignment_statement
@@ -28,6 +34,14 @@ local queries = {
 		  (function_definition
 			parameters: (parameters) @parameters
 			body: (block) @body))))
+
+	  (variable_declaration
+		(assignment_statement
+		  (variable_list
+			name: (identifier) @name)
+		(expression_list
+		  (function_definition
+			parameters: (parameters) @parameters))))
 	]
 	]],
 }
@@ -41,7 +55,10 @@ function M:get_curr_container_func()
   local scope = self:get_curr_scope()
 
   for _, node in ipairs(scope) do
-    if node:type() == 'function_declaration' then
+    if
+      node:type() == 'function_declaration'
+      or node:type() == 'function_definition'
+    then
       return node
     end
   end
@@ -70,6 +87,10 @@ function M:get_curr_container_func_info()
 
   local match = ({ matches() })[2]
   local info = {}
+
+  if not match then
+    return
+  end
 
   for id, node in pairs(match) do
     local capture_name = query.captures[id]
