@@ -66,13 +66,13 @@ end
 
 -- Returns the function information of the function in which
 -- the current node contained
--- @returns {Object<{
+-- @returns {{
 --		{string} name of the function
 --		{Array<{
 --		  name: string
 --		}>} parameters
 --		{Array<any>} return value
--- }>}
+-- }}
 function M:get_curr_container_func_info()
   local func_node = self:get_curr_container_func()
 
