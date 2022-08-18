@@ -1,4 +1,4 @@
-local Helper = require('ts-utils.helper')
+local Treesitter = require('ts-utils.treesitter')
 
 local queries = {
   container_function = [[
@@ -46,7 +46,7 @@ local queries = {
 	]],
 }
 
-local M = Helper:new({ language = 'lua', buffer = 0 })
+local M = Treesitter:new({ language = 'lua', buffer = 0 })
 
 -- Returns the node of the function in which the current
 -- node contained
