@@ -100,7 +100,7 @@ function M:get_matches_iter(query_str, node)
   end
 
   ---@diagnostic disable-next-line: undefined-global
-  local query = vim.treesitter.query.parse_query(self.language, query_str)
+  local query = vim.treesitter.query.parse(self.language, query_str)
   return query, query:iter_matches(node, self.buffer)
 end
 
@@ -180,14 +180,15 @@ function M:__get_scope_at_pos_finder(row, column)
       local eraw, ecolumn = node:end_()
 
       if row >= sraw and row <= eraw then
-        if (row > sraw and row < eraw)
-            or (row > sraw and column <= ecolumn)
-            or (row < eraw and column >= scolumn)
-            or (
+        if
+          (row > sraw and row < eraw)
+          or (row > sraw and column <= ecolumn)
+          or (row < eraw and column >= scolumn)
+          or (
             (row == sraw or row == eraw)
-                and column >= scolumn
-                and column <= ecolumn
-            )
+            and column >= scolumn
+            and column <= ecolumn
+          )
         then
           table.insert(scope, find(node))
         end
