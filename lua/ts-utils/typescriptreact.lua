@@ -20,4 +20,28 @@ function M:has_react_import()
   end
 end
 
+function M:get_component_name()
+  local root = self:get_root_node()
+
+  local query = [[
+  ((export_statement 
+    declaration: (function_declaration
+      name: (identifier) @component_name)) 
+    @export_statement (#match? @export_statement "^export default"))
+  ]]
+
+  local q, iter = self:get_captures_iter(query, root)
+
+  local component_name
+
+  for id, node, metadata, match in iter do
+    local name = q.captures[id] -- name of the capture in the query
+    if name == 'component_name' then
+      component_name = self:get_node_text(node)
+    end
+  end
+
+  return component_name
+end
+
 return M

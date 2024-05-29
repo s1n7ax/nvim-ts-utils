@@ -115,7 +115,7 @@ function M:get_captures_iter(query_str, node)
   end
 
   ---@diagnostic disable-next-line: undefined-global
-  local query = vim.treesitter.query.parse_query(self.language, query_str)
+  local query = vim.treesitter.query.parse(self.language, query_str)
   return query, query:iter_captures(node, self.buffer)
 end
 
@@ -125,7 +125,7 @@ end
 -- @see {@link lua-treesitter-node| https://neovim.io/doc/user/treesitter.html#lua-treesitter-node} node on the cursor
 function M:get_node_text(node)
   ---@diagnostic disable-next-line: undefined-global
-  return vim.treesitter.query.get_node_text(node, self.buffer)
+  return vim.treesitter.get_node_text(node, self.buffer)
 end
 
 -- Returns the node on the cursor
