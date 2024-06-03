@@ -3,6 +3,7 @@ local Treesitter = require('ts-utils.treesitter')
 local M = Treesitter:new({ language = 'typescript', buffer = 0 })
 
 function M:has_react_import()
+  self:refresh()
   local root = self:get_root_node()
 
   local query = [[
@@ -21,6 +22,7 @@ function M:has_react_import()
 end
 
 function M:get_component_name()
+  self:refresh()
   local root = self:get_root_node()
 
   local query = [[
@@ -34,8 +36,8 @@ function M:get_component_name()
 
   local component_name
 
-  for id, node, metadata, match in iter do
-    local name = q.captures[id] -- name of the capture in the query
+  for id, node in iter do
+    local name = q.captures[id]
     if name == 'component_name' then
       component_name = self:get_node_text(node)
     end
