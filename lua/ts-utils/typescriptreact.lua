@@ -46,4 +46,29 @@ function M:get_component_name()
   return component_name
 end
 
+function M:component_prop_range()
+  self:refresh()
+  local root = self:get_root_node()
+
+  local query = [[
+  ((export_statement 
+    declaration: (function_declaration
+      parameters: (formal_parameters) @params))
+    @export_statement (#match? @export_statement "^export default"))
+  ]]
+
+  local q, iter = self:get_captures_iter(query, root)
+
+  local param_node
+
+  for id, node in iter do
+    local name = q.captures[id]
+    if name == 'params' then
+      param_node = node
+    end
+  end
+
+  return param_node:range()
+end
+
 return M
